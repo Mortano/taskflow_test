@@ -1,13 +1,15 @@
 
 #include <taskflow/taskflow.hpp>
 
+#include <chrono>
 #include <iostream>
 #include <mutex>
 #include <random>
 #include <sstream>
 #include <string>
 
-static std::mt19937 s_rng;
+static std::mt19937 s_rng{
+    std::chrono::high_resolution_clock::now().time_since_epoch().count()};
 
 /**
  * Record all tasks that are executed in order. I'm using a custom observer here
@@ -44,6 +46,8 @@ std::vector<std::string> generate_random_task_names(size_t count, RNG &rng) {
 template <typename Taskflow>
 void run_recursive_task(const std::string &identifier, Taskflow &taskflow) {
   std::cout << identifier << "\n";
+  if (identifier.size() >= 20)
+    return; // Don't generate too many tasks
 
   // Generate between 0 and 2 new tasks. This count varies from execution to
   // execution!
@@ -82,6 +86,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Running the taskflow...\n";
   for (auto run = 0; run < NUM_RUNS; ++run) {
+
     executor.run(taskflow).wait();
   }
 
