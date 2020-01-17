@@ -32,6 +32,7 @@
 ## Local 
 
 .idea/workspace.xml
+.vscode
 
 build/release/*
 build/debug/*
